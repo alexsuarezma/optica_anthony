@@ -29,7 +29,7 @@
 
         <div class="min-h-screen bg-gray-100">
             @livewire('navigation-menu')
-
+            @livewireScripts
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="bg-white shadow">
@@ -46,8 +46,6 @@
         </div>
 
         @stack('modals')
-
-        @livewireScripts
 
     </body>
 </html>

@@ -13,33 +13,58 @@ class UserController extends Controller
     private $URI = 'http://181.39.128.194:8092/';
 
     public function invoiceView(){
-        $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
-        
-        $invoices = Http::acceptJson()->post("{$this->URI}SAN32.WS.Rest.Bitacora/api/ConsultarFactura/ConsultarFactura", [
-            'cedula' => $user->cedula,
-            'empresa' => 'All Padel',
-        ]);
 
-        $invoices = $invoices->json()['Response'];
+        $invoices = $this->fetchInvoices('','');
 
         return view('user.invoice',[
             'invoices' => compact('invoices')
         ]);
     }
 
+    public function getInvoices(Request $request){
+        return $this->fetchInvoices($request->input('fechaInicio'), $request->input('fechaFin'));
+    }
+
+    public function fetchInvoices($fechaInicio, $fechaFin){
+        $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
+        
+        $invoices = Http::acceptJson()->post("{$this->URI}SAN32.WS.Rest.Bitacora/api/ConsultarFactura/ConsultarFactura", [
+            'cedula' => $user->cedula,
+            'empresa' => 'All Padel',
+            'fechaInicio' => $fechaInicio != '' ? date('m/d/Y', strtotime($fechaInicio)) : '',
+            'fechaFin' => $fechaFin != '' ? date('m/d/Y', strtotime($fechaFin)) : ''
+        ]);
+
+        $invoices = $invoices->json()['Response'];
+
+        return $invoices;
+    }
+
     public function accountStatusView(){
+        $documents = $this->fetchAccountStatus('','');
+
+        return view('user.account-status',[
+            'documents' => compact('documents')
+        ]);
+    }
+
+    public function getAccountStatus(Request $request){
+        return $this->fetchAccountStatus($request->input('fechaInicio'), $request->input('fechaFin'));
+    }
+
+    public function fetchAccountStatus($fechaInicio, $fechaFin){
         $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
         
         $documents = Http::acceptJson()->post("{$this->URI}SAN32.WS.Rest.Bitacora/api/ConsultarEstadoCuentaCliente/ConsultarEstadoCuentaCliente", [
             'cedula' => $user->cedula,
             'empresa' => 'All Padel',
+            'fechaInicio' => $fechaInicio != '' ? date('m/d/Y', strtotime($fechaInicio)) : '',
+            'fechaFin' => $fechaFin != '' ? date('m/d/Y', strtotime($fechaFin)) : ''
         ]);
 
         $documents = $documents->json()['Response'];
 
-        return view('user.account-status',[
-            'documents' => compact('documents')
-        ]);
+        return $documents;
     }
 
     public function printInvoice(Request $request){

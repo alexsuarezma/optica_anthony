@@ -2,7 +2,7 @@
     <div class="w-full min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
-                <img class="mx-auto h-32 w-auto" src="{{asset('assets/images/logo-uae.jpg')}}" alt="Workflow">
+                <!-- <img class="mx-auto h-32 w-auto" src="{{asset('assets/images/logo-uae.jpg')}}" alt="Workflow"> -->
                 <p class="my-3 text-center text-sm text-gray-600">
                     <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
                         Universidad Agraria del Ecuador

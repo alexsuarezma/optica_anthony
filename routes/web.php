@@ -75,10 +75,12 @@ Route::get('/email/verify', function () {
 
 Route::middleware(['auth','verified' ])->prefix('user')->group(function () {
     Route::get('/invoice', [UserController::class, 'invoiceView'])->name('user.invoice');
+    Route::post('/fetch/invoice', [UserController::class, 'getInvoices'])->name('user.fetch.invoice');
+
     Route::get('/account/status', [UserController::class, 'accountStatusView'])->name('user.account.status');
+    Route::post('/fetch/account/status', [UserController::class, 'getAccountStatus'])->name('user.fetch.account.status');
 
     Route::post('/print/invoice', [UserController::class, 'printInvoice'])->name('user.invoice.post');
-    Route::post('/account/status', [UserController::class, 'accountStatus'])->name('user.account.status.post');
 
     Route::put('/information/profile', [UserController::class, 'updateInformationProfile'])->name('user.profile.information.update');
 });
