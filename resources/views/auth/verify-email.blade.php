@@ -5,7 +5,7 @@
                 <!-- <img class="mx-auto h-32 w-auto" src="{{asset('assets/images/logo-uae.jpg')}}" alt="Workflow"> -->
                 <p class="my-3 text-center text-sm text-gray-600">
                     <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
-                        Universidad Agraria del Ecuador
+                        All Padel
                     </a>
                 </p>
                 <div class="mb-4 text-sm text-gray-600">
