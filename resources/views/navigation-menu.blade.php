@@ -15,6 +15,11 @@
                     <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         SAN32
                     </x-jet-nav-link>
+                    @if(\Auth::user()->admin == 1)
+                        <x-jet-nav-link href="{{ route('user.index') }}" :active="Route::is('user.create.admin') || Route::is('user.index')">
+                            USUARIOS
+                        </x-jet-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -82,8 +87,13 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-jet-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                {{ __('Home') }}
+                {{ __('SAN32') }}
             </x-jet-responsive-nav-link>
+            @if(\Auth::user()->admin == 1)
+                <x-jet-responsive-nav-link href="{{ route('user.index') }}" :active="Route::is('user.create.admin') || Route::is('user.index')">
+                    {{ __('USUARIOS') }}
+                </x-jet-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

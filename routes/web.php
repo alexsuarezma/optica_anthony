@@ -74,6 +74,9 @@ Route::get('/email/verify', function () {
 
 
 Route::middleware(['auth','verified' ])->prefix('user')->group(function () {
+    Route::get('/create', [UserController::class, 'createView'])->name('user.create.admin');
+    Route::post('/create', [UserController::class, 'create'])->name('user.create.admin.post');
+
     Route::get('/invoice', [UserController::class, 'invoiceView'])->name('user.invoice');
     Route::post('/fetch/invoice', [UserController::class, 'getInvoices'])->name('user.fetch.invoice');
 
@@ -83,4 +86,8 @@ Route::middleware(['auth','verified' ])->prefix('user')->group(function () {
     Route::post('/print/invoice', [UserController::class, 'printInvoice'])->name('user.invoice.post');
 
     Route::put('/information/profile', [UserController::class, 'updateInformationProfile'])->name('user.profile.information.update');
+
+    Route::get('/', [UserController::class, 'index'])->name('user.index');
+    Route::put('/desactive/account', [UserController::class, 'desactiveAccount'])->name('user.desactive.account');
+    Route::put('/password', [UserController::class, 'updatePasswordsUsers'])->name('user.passwords.update');
 });
