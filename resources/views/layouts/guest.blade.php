@@ -12,7 +12,7 @@
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <!-- Scripts -->
         <script src="{{ mix('js/app.js') }}" defer></script>
         <script src="{{ asset('js/validation.js') }}" defer></script>

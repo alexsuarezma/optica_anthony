@@ -83,6 +83,9 @@ Route::middleware(['auth','verified' ])->prefix('user')->group(function () {
     Route::get('/account/status', [UserController::class, 'accountStatusView'])->name('user.account.status');
     Route::post('/fetch/account/status', [UserController::class, 'getAccountStatus'])->name('user.fetch.account.status');
 
+    Route::get('/account/status/history', [UserController::class, 'accountStatusHistoryView'])->name('user.account.status.history');
+    Route::post('/fetch/account/status/history', [UserController::class, 'getAccountStatusHistory'])->name('user.fetch.account.status.history');
+
     Route::post('/print/invoice', [UserController::class, 'printInvoice'])->name('user.invoice.post');
 
     Route::put('/information/profile', [UserController::class, 'updateInformationProfile'])->name('user.profile.information.update');
@@ -91,3 +94,5 @@ Route::middleware(['auth','verified' ])->prefix('user')->group(function () {
     Route::put('/desactive/account', [UserController::class, 'desactiveAccount'])->name('user.desactive.account');
     Route::put('/password', [UserController::class, 'updatePasswordsUsers'])->name('user.passwords.update');
 });
+
+

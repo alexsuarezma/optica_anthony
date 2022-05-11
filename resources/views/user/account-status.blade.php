@@ -78,56 +78,74 @@
                     e.cancel = true;
                 },
                 
-                // summary: {
-                //     totalItems: [{
-                //         column: "TOTAL_FACTURA",
-                //         summaryType: "sum"
-                //     }]
-                // },
-                // columns: [
-                //     {
-                //         type: 'buttons',
-                //         width: 110,
-                //         buttons: ['edit', {
-                //                 hint: 'Imprimir',
-                //                 icon: 'print',
-                //                 onClick(e) {
-                //                     // console.log(e.row.data.SEQ_COMPTE)
-                //                     //print factura
-                //                     const form = document.createElement('form')
-                //                     const inputSeqCompte = document.createElement('input');
-                //                     const inputToken = document.createElement('input');
-                                    
-                //                     form.method = 'POST';
-                //                     form.action = "/user/print/invoice"
-                //                     form.target = "_blank"
-                                    
-                //                     inputSeqCompte.type = 'hidden'
-                //                     inputSeqCompte.name = "id"
-                //                     inputSeqCompte.value = e.row.data.SEQ_COMPTE
-
-                //                     inputToken.type = 'hidden'
-                //                     inputToken.name = "_token"
-                //                     inputToken.value = $('meta[name="csrf-token"]').attr("content")
-                                    
-                //                     form.appendChild(inputSeqCompte)
-                //                     form.appendChild(inputToken)
-                                    
-                //                     document.body.appendChild(form);
-                //                     form.submit();
-                //                 },
-                //             }
-                //         ],
-                //     },
-                //     {
-                //         dataField: "FECHA_EMISION", 
-                //         dataType: "date",
-                //     },
-                //     'NUMERO_FACTURA',
-                //     'CLIENTE',
-                //     'NOMBRE',
-                //     'TOTAL_FACTURA'
-                // ],
+                summary: {
+                    totalItems: [
+                        {
+                            column: "VALOR_SALDO",
+                            summaryType: "sum",
+                            valueFormat: {
+                                type: "currency",
+                                precision: 2
+                            }
+                        },
+                        {
+                            column: "VALOR_COMPROBANTE",
+                            summaryType: "sum",
+                            valueFormat: {
+                                type: "currency",
+                                precision: 2
+                            }
+                        },
+                        {
+                            column: "VALOR_ABONO",
+                            summaryType: "sum",
+                            valueFormat: {
+                                type: "currency",
+                                precision: 2
+                            }
+                        }
+                    ]
+                },
+                columns: [
+                    'NUMERO_DOCUMENTO',
+                    'TIPO_DOC',
+                    {
+                        dataField: "VALOR_COMPROBANTE", 
+                        format: {
+                            type: "currency",
+                            precision: 2
+                        }
+                        // format: "currency",
+                        // editorOptions: {
+                        //     format: "$ #,##0.##"
+                        // }
+                    },
+                    {
+                        dataField: "VALOR_ABONO", 
+                        format: {
+                            type: "currency",
+                            precision: 2
+                        }
+                        // format: "currency",
+                        // editorOptions: {
+                        //     format: "$ #,##0.##"
+                        // }
+                    },
+                    {
+                        dataField: "VALOR_SALDO", 
+                        format: {
+                            type: "currency",
+                            precision: 2
+                        }
+                    },
+                    {
+                        dataField: "FECHAEMISION", 
+                        dataType: "date",
+                    },
+                    'CLIENTE',
+                    'NOMBRE_CLIENTE',
+                    'NOM_VENDEDOR'
+                ],
 
             });
         }

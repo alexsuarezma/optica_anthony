@@ -5,6 +5,9 @@
         </x-slot>
 
         <x-jet-validation-errors class="mb-4" />
+        <div class="w-full flex justify-center items-center">
+            <span class="hidden text-red-700 text-sm" id="text-fail">Lo lamentamos, no se encuentra dentro de nuestros registros de cliente actualmente</span>
+        </div>
 
         <form method="POST" action="{{ route('register') }}">
             @csrf
@@ -158,4 +161,51 @@
             </form>
         </div>
     </div>
+    <script>
+        // document.getElementById('cedula').addEventListener('blur', async () => {
+        //     const url = 'http://181.39.128.194:8092/SAN32.WS.Rest.Bitacora/api/ValidarIdentificacion/ValidarIdentificacion'
+    
+        //     var data = {
+        //                 cedula: document.getElementById('cedula').value,
+        //                 empresa: 'All Padel'
+        //             }
+
+        //         fetch(url, {
+        //             method: 'POST', 
+        //             body: JSON.stringify(data), 
+        //         }).then(res => res.json())
+        //         .catch(error => console.error('Error:', error))
+        //         .then(response => console.log('Success:', response));
+
+        //     // const response = await fetch(url, {
+        //     //                             method: 'POST',
+        //     //                             mode: 'no-cors', // no-cors, *cors, same-origin
+        //     //                             cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        //     //                             headers: {
+        //     //                             'Content-Type': 'application/json'
+        //     //                             // 'Content-Type': 'application/x-www-form-urlencoded',
+        //     //                             },
+        //     //                             body:  JSON.stringify({
+        //     //                                 cedula: document.getElementById('cedula').value,
+        //     //                                 empresa: 'All Padel'
+        //     //                             }),
+        //     //                         }).then(response => response.json())
+        //     //                         .catch(err => alert(`Ha ocurrido un error: ${err}`))
+        //     //                         .then(response => {
+        //     //                             if(response.CodigoError == "00"){
+        //     //                                 const textFail = document.getElementById('text-fail')
+                                            
+        //     //                                 if(response.Response[0].EXISTE_CLIENTE == 0){
+        //     //                                     textFail.classList.remove("hidden")
+        //     //                                 }else{
+        //     //                                     textFail.classList.add("hidden")
+        //     //                                 }
+
+        //     //                             }else{
+        //     //                                 alert(`Ha ocurrido un error: ${response.MensajeError}`)
+        //     //                             }
+        //     //                         })
+
+        // })
+    </script>
 </x-guest-layout>

@@ -18,13 +18,13 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:60',
             'lastname' => 'string|max:60',
-            // 'cedula' => ['required', 'numeric', 'unique:users', 'between:0000000000,9999999999999',
-            //     function ($attribute, $value, $fail){
-            //         if(!$this->validateCedula($value)){
-            //             $fail("Lo lamentamos, el cliente que intenta crear no se encuentra dentro de los registros de clientes actualmente");
-            //         }
-            //     },
-            // ],
+            'cedula' => ['required', 'numeric', 'unique:users', 'between:0000000000,9999999999999',
+                function ($attribute, $value, $fail){
+                    if(!$this->validateCedula($value)){
+                        $fail("Lo lamentamos, el cliente que intenta crear no se encuentra dentro de los registros de clientes actualmente");
+                    }
+                },
+            ],
             'email' => 'required|string|max:100|email|unique:users,email,',
             'address' => 'string',
             'phone' => 'numeric|min:7',
@@ -119,6 +119,18 @@ class UserController extends Controller
         ]);
     }
 
+    public function accountStatusHistoryView(){
+        $documents = $this->fetchAccountStatusHistory('','');
+
+        return view('user.account-status-history',[
+            'documents' => compact('documents')
+        ]);
+    }
+
+    public function getAccountStatusHistory(Request $request){
+        return $this->fetchAccountStatusHistory($request->input('fechaInicio'), $request->input('fechaFin'));
+    }
+    
     public function getAccountStatus(Request $request){
         return $this->fetchAccountStatus($request->input('fechaInicio'), $request->input('fechaFin'));
     }
@@ -127,6 +139,21 @@ class UserController extends Controller
         $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
         
         $documents = Http::acceptJson()->post("{$this->URI}SAN32.WS.Rest.Bitacora/api/ConsultarEstadoCuentaCliente/ConsultarEstadoCuentaCliente", [
+            'cedula' => $user->cedula,
+            'empresa' => 'All Padel',
+            'fechaInicio' => $fechaInicio != '' ? date('m/d/Y', strtotime($fechaInicio)) : '',
+            'fechaFin' => $fechaFin != '' ? date('m/d/Y', strtotime($fechaFin)) : ''
+        ]);
+
+        $documents = $documents->json()['Response'];
+
+        return $documents;
+    }
+
+    public function fetchAccountStatusHistory($fechaInicio, $fechaFin){
+        $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
+        
+        $documents = Http::acceptJson()->post("{$this->URI}SAN32.WS.Rest.Bitacora/api/ConsultarEstadoCuentaHistorico/ConsultarEstadoCuentaHistorico", [
             'cedula' => $user->cedula,
             'empresa' => 'All Padel',
             'fechaInicio' => $fechaInicio != '' ? date('m/d/Y', strtotime($fechaInicio)) : '',
