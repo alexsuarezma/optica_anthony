@@ -17,12 +17,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('lastname')->nullable();
-            $table->string('cedula')->unique();
+            $table->string('dni_companie');
+            $table->tinyInteger('salesman')->nullable()->default('0');
+            $table->tinyInteger('admin')->nullable()->default('0');
+            $table->tinyInteger('client')->nullable()->default('0');
             $table->string('email')->unique();
             $table->string('phone', 13)->nullable();
             $table->string('address')->nullable();
             $table->tinyInteger('active')->nullable()->default('1');
-            $table->tinyInteger('admin')->nullable()->default('0');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

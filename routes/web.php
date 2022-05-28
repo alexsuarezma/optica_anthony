@@ -7,6 +7,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\OrderController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,16 +27,6 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
-
-// Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified'
-// ])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return view('dashboard');
-//     })->name('dashboard');
-// });
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
@@ -77,16 +69,13 @@ Route::middleware(['auth','verified' ])->prefix('user')->group(function () {
     Route::get('/create', [UserController::class, 'createView'])->name('user.create.admin');
     Route::post('/create', [UserController::class, 'create'])->name('user.create.admin.post');
 
-    Route::get('/invoice', [UserController::class, 'invoiceView'])->name('user.invoice');
-    Route::post('/fetch/invoice', [UserController::class, 'getInvoices'])->name('user.fetch.invoice');
+    Route::get('/activity', [ActivityController::class, 'index'])->name('activity.index');
+    Route::get('/activity/create', [ActivityController::class, 'createView'])->name('activity.create');
+    Route::post('/activity/create', [ActivityController::class, 'create'])->name('activity.create.post');
+    Route::get('/activity/update/{id}', [ActivityController::class, 'updateView'])->name('activity.update');
+    Route::put('/activity/update', [ActivityController::class, 'update'])->name('activity.update.put');
 
-    Route::get('/account/status', [UserController::class, 'accountStatusView'])->name('user.account.status');
-    Route::post('/fetch/account/status', [UserController::class, 'getAccountStatus'])->name('user.fetch.account.status');
-
-    Route::get('/account/status/history', [UserController::class, 'accountStatusHistoryView'])->name('user.account.status.history');
-    Route::post('/fetch/account/status/history', [UserController::class, 'getAccountStatusHistory'])->name('user.fetch.account.status.history');
-
-    Route::post('/print/invoice', [UserController::class, 'printInvoice'])->name('user.invoice.post');
+    Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
 
     Route::put('/information/profile', [UserController::class, 'updateInformationProfile'])->name('user.profile.information.update');
 

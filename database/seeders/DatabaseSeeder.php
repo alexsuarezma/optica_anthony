@@ -19,8 +19,24 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::create([
             'name' => 'Administrador',
             'email' => 'admin@admin.com',
-            'cedula' => '9999999999999',
+            'dni_companie' => '9999999999999',
             'admin' => 1,
+            'password' => bcrypt('123456')
+        ]);
+
+        \App\Models\User::create([
+            'name' => 'Salesman',
+            'email' => 'salesman@salesman.com',
+            'dni_companie' => '9999999999999',
+            'salesman' => 1,
+            'password' => bcrypt('123456')
+        ]);
+
+        \App\Models\User::create([
+            'name' => 'Client',
+            'email' => 'cliente@cliente.com',
+            'dni_companie' => '9999999999999',
+            'client' => 1,
             'password' => bcrypt('123456')
         ]);
     }
