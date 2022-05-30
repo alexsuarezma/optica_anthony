@@ -3,7 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Api\OderController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\MessagesController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +24,10 @@ use App\Http\Controllers\Api\OderController;
 
 
 Route::prefix('order')->group(function () {
-    Route::post('/create', [OderController::class, 'create'])->name('order.create');
-    Route::post('/update', [OderController::class, 'update'])->name('order.create');
+    Route::post('/create', [OrderController::class, 'create'])->name('order.create');
+    Route::post('/update', [OrderController::class, 'update'])->name('order.update');
+});
+
+Route::prefix('messages')->group(function () {
+    Route::post('/send-to-one-client', [MessagesController::class, 'sendToOneClient'])->name('message.send.one.client.create');
 });

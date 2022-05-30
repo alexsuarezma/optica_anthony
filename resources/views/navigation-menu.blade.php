@@ -28,17 +28,19 @@
                             class="absolute z-10 -ml-4 mt-3 transform px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2">
                             <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
                                 <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                                    <a href="{{ route('activity.index') }}" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
-                                        <!-- Heroicon name: outline/cursor-click -->
-                                        <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                                        </svg>
-                                        <div class="ml-4">
-                                            <p class="text-base font-medium text-gray-900">Mis Actividades</p>
-                                            <p class="mt-1 text-sm text-gray-500">Registro y consultas de las actividades diaria de los vendedores.</p>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
+                                    @if(\Auth::user()->salesman == 1 || \Auth::user()->admin == 1)
+                                        <a href="{{ route('activity.index') }}" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
+                                            <!-- Heroicon name: outline/cursor-click -->
+                                            <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                                            </svg>
+                                            <div class="ml-4">
+                                                <p class="text-base font-medium text-gray-900">{{\Auth::user()->salesman == 1 ? 'Mis' : ''}} Actividades</p>
+                                                <p class="mt-1 text-sm text-gray-500">Registro y consultas de las actividades diaria de los vendedores.</p>
+                                            </div>
+                                        </a>
+                                    @endif
+                                    <a href="{{ route('order.index') }}" class="-m-3 p-3 flex items-start rounded-lg hover:bg-gray-50">
                                         <!-- Heroicon name: outline/view-grid -->
                                         <svg class="flex-shrink-0 h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />

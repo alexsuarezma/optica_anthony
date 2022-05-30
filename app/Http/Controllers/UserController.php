@@ -19,11 +19,11 @@ class UserController extends Controller
             'name' => 'required|string|max:60',
             'lastname' => 'string|max:60',
             'cedula' => ['required', 'numeric', 'unique:users', 'between:0000000000,9999999999999',
-                function ($attribute, $value, $fail){
-                    if(!$this->validateCedula($value)){
-                        $fail("Lo lamentamos, el cliente que intenta crear no se encuentra dentro de los registros de clientes actualmente");
-                    }
-                },
+                // function ($attribute, $value, $fail){
+                //     if(!$this->validateCedula($value)){
+                //         $fail("Lo lamentamos, el cliente que intenta crear no se encuentra dentro de los registros de clientes actualmente");
+                //     }
+                // },
             ],
             'email' => 'required|string|max:100|email|unique:users,email,',
             'address' => 'string',
@@ -59,161 +59,6 @@ class UserController extends Controller
         }
 
         return redirect()->back()->with('success', "Información creada satisfactoriamente"); 
-    }
-
-    private function validateCedula($cedula){
-        $identity = Http::acceptJson()->post("http://181.39.128.194:8092/SAN32.WS.Rest.Bitacora/api/ValidarIdentificacion/ValidarIdentificacion", [
-            'cedula' => $cedula,
-            'empresa' => 'All Padel',
-        ]);
-        
-        $exist = $identity->json()['Response'];
-
-        // var_dump($identity->json()); die;
-
-        if(empty($exist) || $identity->json()['CodigoError'] == '2000'){
-            return false;
-        }
-
-        if($exist[0]['EXISTE_CLIENTE'] == 0) //&& ($identity->json()['CodigoError'] != "200" && $identity->json()['CodigoError'] != "00"))
-        {
-            return false;
-        }
-        
-        return true;
-    }
-
-    public function invoiceView(){
-
-        $invoices = $this->fetchInvoices('','');
-
-        return view('user.invoice',[
-            'invoices' => compact('invoices')
-        ]);
-    }
-
-    public function getInvoices(Request $request){
-        return $this->fetchInvoices($request->input('fechaInicio'), $request->input('fechaFin'));
-    }
-
-    public function fetchInvoices($fechaInicio, $fechaFin){
-        $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
-        
-        $invoices = Http::acceptJson()->post("{$this->URI}SAN32.WS.Rest.Bitacora/api/ConsultarFactura/ConsultarFactura", [
-            'cedula' => $user->cedula,
-            'empresa' => 'All Padel',
-            'fechaInicio' => $fechaInicio != '' ? date('m/d/Y', strtotime($fechaInicio)) : '',
-            'fechaFin' => $fechaFin != '' ? date('m/d/Y', strtotime($fechaFin)) : ''
-        ]);
-
-        $invoices = $invoices->json()['Response'];
-
-        return $invoices;
-    }
-
-    public function accountStatusView(){
-        $documents = $this->fetchAccountStatus('','');
-
-        return view('user.account-status',[
-            'documents' => compact('documents')
-        ]);
-    }
-
-    public function accountStatusHistoryView(){
-        $documents = $this->fetchAccountStatusHistory('','');
-
-        return view('user.account-status-history',[
-            'documents' => compact('documents')
-        ]);
-    }
-
-    public function getAccountStatusHistory(Request $request){
-        return $this->fetchAccountStatusHistory($request->input('fechaInicio'), $request->input('fechaFin'));
-    }
-    
-    public function getAccountStatus(Request $request){
-        return $this->fetchAccountStatus($request->input('fechaInicio'), $request->input('fechaFin'));
-    }
-
-    public function fetchAccountStatus($fechaInicio, $fechaFin){
-        $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
-        
-        $documents = Http::acceptJson()->post("{$this->URI}SAN32.WS.Rest.Bitacora/api/ConsultarEstadoCuentaCliente/ConsultarEstadoCuentaCliente", [
-            'cedula' => $user->cedula,
-            'empresa' => 'All Padel',
-            'fechaInicio' => $fechaInicio != '' ? date('m/d/Y', strtotime($fechaInicio)) : '',
-            'fechaFin' => $fechaFin != '' ? date('m/d/Y', strtotime($fechaFin)) : ''
-        ]);
-
-        $documents = $documents->json()['Response'];
-
-        return $documents;
-    }
-
-    public function fetchAccountStatusHistory($fechaInicio, $fechaFin){
-        $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
-        
-        $documents = Http::acceptJson()->post("{$this->URI}SAN32.WS.Rest.Bitacora/api/ConsultarEstadoCuentaHistorico/ConsultarEstadoCuentaHistorico", [
-            'cedula' => $user->cedula,
-            'empresa' => 'All Padel',
-            'fechaInicio' => $fechaInicio != '' ? date('m/d/Y', strtotime($fechaInicio)) : '',
-            'fechaFin' => $fechaFin != '' ? date('m/d/Y', strtotime($fechaFin)) : ''
-        ]);
-
-        $documents = $documents->json()['Response'];
-
-        return $documents;
-    }
-
-    public function printInvoice(Request $request){
-        $user = User::select('cedula')->where('id', \Auth::user()->id)->first();
-        $query = '';
-
-        $query .= "SELECT VW_DOCUMENTO_FACTURA.nombreComercial, VW_DOCUMENTO_FACTURA.dirMatriz, VW_DOCUMENTO_FACTURA.dirEstablecimiento, VW_DOCUMENTO_FACTURA.contribuyenteEspecial";
-        $query .= ",VW_DOCUMENTO_FACTURA.obligadoContabilidad, VW_DOCUMENTO_FACTURA.razonSocialComprador, VW_DOCUMENTO_FACTURA.RUC, VW_DOCUMENTO_FACTURA.fechaEmision";
-        $query .= ",VW_DOCUMENTO_FACTURA.guiaRemision, VW_DOCUMENTO_FACTURA.descuento, VW_DOCUMENTO_FACTURA.identificacionComprador, VW_DOCUMENTO_FACTURA.MAIL, VW_DOCUMENTO_FACTURA.baseImponible";
-        $query .= ",VW_DOCUMENTO_FACTURA.fecha_autorizacionElectronica, VW_DOCUMENTO_FACTURA.ESTAB, VW_DOCUMENTO_FACTURA.ptoEmi, VW_DOCUMENTO_FACTURA.secuencial, VW_DOCUMENTO_FACTURA.ambiente, VW_DOCUMENTO_FACTURA.CLAVE_ACCESO";
-        $query .= ",VW_DOCUMENTO_FACTURA.telefonos_CLI, VW_DOCUMENTO_FACTURA.AUTORIZACION, VW_DOCUMENTO_FACTURA.DOMICILIO, VW_DOCUMENTO_FACTURA.NOMBRE_UBICACION, VW_DOCUMENTO_FACTURA.NOMBRE_FPAGO";
-        $query .= ",VW_DOCUMENTO_FACTURA.NOMBRE_VENDEDOR, VW_DOCUMENTO_FACTURA.OBSERVACION, VW_DOCUMENTO_FACTURA.VALOR_IVA, VW_DOCUMENTO_FACTURA.VEN_TOTAL, VW_DOCUMENTO_FACTURA.cantidad, VW_DOCUMENTO_FACTURA.codigoPrincipal";
-        $query .= ",VW_DOCUMENTO_FACTURA.descripcion, VW_DOCUMENTO_FACTURA.precioUnitario, VW_DOCUMENTO_FACTURA.TASA_ICE, VW_DOCUMENTO_FACTURA.DCTONORMAL, VW_DOCUMENTO_FACTURA.secuencial_mov, VW_DOCUMENTO_FACTURA.BODEGA";
-        $query .= ",VW_DOCUMENTO_FACTURA.factorx, VW_DOCUMENTO_FACTURA.SUBTOTALIVA, VW_DOCUMENTO_FACTURA.IVA FROM VW_DOCUMENTO_FACTURA VW_DOCUMENTO_FACTURA WHERE SEQ_COMPTE = '{$request->input('id')}' ORDER BY VW_DOCUMENTO_FACTURA.secuencial_mov";
-
-        $invoices = Http::post("{$this->URI}/SAN32.WS.Rest.Reportes/api/EjecutarReporte", [
-           'ParametrosSession' => array(
-                'CodigoBodega' => '001',
-                'CodigoEmpresa' => '1',
-                'CodigoSucursal' => '001',
-                'CodigoUsuario' => 'OPTIMUS',
-                'FechaProceso' => '13/11/2020',
-                'IdEmpresa' => '823',
-                'Imei' => 'c1f20795cd373dbc',
-                'Latitud' => '37.421998333333335',
-                'Longitud' => '-122.08400000000002',
-                'NivelPrecio' => '',
-                'NombreBodega' => 'BODEGA PRINCIPAL',
-                'NombreEmpresa' => 'ALL PADEL',
-                'NombreSucursal' => 'MATRIZ',
-                'NombreUsuario' => 'INDETERMINADO'
-            ),
-            'parametrosReporte' => array(
-                "Bodega" => "001",
-                "NombreReporte" => "RIDE",
-                "RutaReporte" => "reportes_darmacio",
-                "SQLQuery" => $query,
-                "SelectionFormula" => "",
-                "SqlSubquery" => "SELECT CLIENTE, SEQ_COMPTE, DIAS, FP, VALOR FROM VW_FORMA_PAGO WHERE   SEQ_COMPTE = '{$request->input('id')}'",
-                "TipoExportacion" => "",
-                "Usuario" => "OPTIMUS"
-            )
-        ]);
-
-        // var_dump($invoices->json());
-
-        $invoices = $invoices->json()['PathReporte'];
-
-        return view("user.invoice-pdf", [
-            'url' => "{$this->URI}{$invoices}"
-        ]);
     }
 
     public function updateInformationProfile(Request $request){

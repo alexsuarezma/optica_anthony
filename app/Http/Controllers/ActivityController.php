@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 use App\Models\Activity;
-use App\Models\OrderHasActivity;
+use App\Models\DetailActivity;
 use App\Models\Order;
+use App\Models\OrderHasActivity;
 
 class ActivityController extends Controller
 {
@@ -18,28 +19,30 @@ class ActivityController extends Controller
             'description' => 'string|max:255',
             'detail_activity_id' => 'required|numeric',
             'aperture_date' => 'required|date|after_or_equal:'. Carbon::now()->format('Y-m-d'),
-            'aperture_hour' => 'required|hour',
-            'departure_date' => 'required|date|after:aperture_date',
-            'departure_hour' => 'required|hour',
+            // 'aperture_hour' => 'required|date_format:H:i',
+            // 'departure_date' => 'required|date|after:aperture_date',
+            // 'departure_hour' => 'required|date_format:H:i',
             'delivery_date' => 'required|date|after:aperture_date',
-            'delivery_hour' => 'required|hour',
+            // 'delivery_hour' => 'required|date_format:H:i',
             'order_id' => 'required|array|min:1',
             'order_id.*' => 'required|numeric',
         ]);
         
         try {
 
-            DB::beginTransaction();
+            // DB::beginTransaction();
             
             $activity = new Activity();
 
             $activity->description = $request->input('description');
-            $activity->aperture_date = date("Y/m/d", strtotime($request->input('aperture_date')).$request->input('aperture_hour'));
-            $activity->departure_hour = date("Y/m/d", strtotime($request->input('departure_date')).$request->input('departure_hour'));
-            $activity->delivery_date = date("Y/m/d", strtotime($request->input('delivery_date')).$request->input('delivery_hour'));
+            $activity->aperture_date = $request->input('aperture_date'); //date("Y/m/d", strtotime($request->input('aperture_date').$request->input('aperture_hour')));
+            if(!empty($request->input('departure_date'))){
+                $activity->departure_hour = $request->input('departure_date'); //date("Y/m/d", strtotime($request->input('departure_date').$request->input('departure_hour')));
+            }
+            $activity->delivery_date = $request->input('delivery_date'); //date("Y/m/d", strtotime($request->input('delivery_date').$request->input('delivery_hour')));
             $activity->detail_activity_id = $request->input('detail_activity_id');
             $activity->user_id = \Auth::user()->id;
-
+            
             $activity->save();
             
             for ($i=0; $i < count($request->input('order_id')); $i++) { 
@@ -82,11 +85,8 @@ class ActivityController extends Controller
             'description' => 'string|max:255',
             'detail_activity_id' => 'required|numeric',
             'aperture_date' => 'required|date|after_or_equal:'. Carbon::now()->format('Y-m-d'),
-            'aperture_hour' => 'required|hour',
-            'departure_date' => 'required|date|after:aperture_date',
-            'departure_hour' => 'required|hour',
+            // 'departure_date' => 'required|date|after:aperture_date',
             'delivery_date' => 'required|date|after:aperture_date',
-            'delivery_hour' => 'required|hour',
             'order_id' => 'required|array|min:1',
             'order_id.*' => 'required|numeric',
         ]);
@@ -102,9 +102,11 @@ class ActivityController extends Controller
             }
 
             $activity->description = $request->input('description');
-            $activity->aperture_date = date("Y/m/d", strtotime($request->input('aperture_date')).$request->input('aperture_hour'));
-            $activity->departure_hour = date("Y/m/d", strtotime($request->input('departure_date')).$request->input('departure_hour'));
-            $activity->delivery_date = date("Y/m/d", strtotime($request->input('delivery_date')).$request->input('delivery_hour'));
+            $activity->aperture_date = $request->input('aperture_date'); 
+            if(!empty($request->input('departure_date'))){
+                $activity->departure_hour = $request->input('departure_date');
+            }
+            $activity->delivery_date = $request->input('delivery_date');
             $activity->detail_activity_id = $request->input('detail_activity_id');
             $activity->user_id = \Auth::user()->id;
 
@@ -148,9 +150,9 @@ class ActivityController extends Controller
 
         $validatedData = $request->validate([
             'id' => 'required|numeric',
-            'description' => 'string|max:255',
-            'departure_date' => 'required|date|after:aperture_date',
-            'departure_hour' => 'required|hour',
+            // 'description' => 'string|max:255',
+            // 'departure_date' => 'required|date|after:aperture_date',
+            // 'departure_hour' => 'required|hour',
         ]);
         
         try {
@@ -163,8 +165,12 @@ class ActivityController extends Controller
                 throw new \Exception("'No se encontro la actividad que deseas actualizar, porfavor vuelve a intentarlo más tarde'", 1);
             }
 
-            $activity->description = $request->input('description');
-            $activity->aperture_date = date("Y/m/d", strtotime($request->input('aperture_date')).$request->input('aperture_hour'));
+            // $activity->description = $request->input('description');
+            if(!empty($request->input('aperture_date'))){
+                $activity->departure_date = date("Y/m/d", strtotime($request->input('aperture_date')).$request->input('aperture_hour'));
+            }else{
+                $activity->departure_date = Carbon::now();
+            }
 
             $activity->update();
             
@@ -187,24 +193,28 @@ class ActivityController extends Controller
     }
 
     public function createView(){
-        $order_has_activity = OrderHasActivity::where('active', 1)->orderBy('created_at','desc')->get();
-        $orders = Order::where('closed', 0)->orderBy('created_at','desc')->get();
+        $detail_activities = DetailActivity::where('active', 1)->orderBy('created_at','desc')->get();
+        
 
         return view('activity.create', [
-            'order_has_activity' => $order_has_activity,
-            'orders' => $orders
+            'detail_activities' => $detail_activities
         ]);
     }
 
     public function updateView($id){
         $activity = Activity::where('id', $id)->first();
-        $order_has_activity = OrderHasActivity::where('active', 1)->orderBy('created_at','desc')->get();
-        $orders = Order::where('closed', 0)->orderBy('created_at','desc')->get();
+        $detail_activities = DetailActivity::where('active', 1)->orderBy('created_at','desc')->get();
+        
+        $ordersArray = array();
+        foreach($activity->orders as $order){
+            array_push($ordersArray, array('id'=> $order->order->id, 'reference' => $order->order->reference));
+        }
+
 
         return view('activity.update', [
             'activity' => $activity,
-            'order_has_activity' => $order_has_activity,
-            'orders' => $orders,
+            'detail_activities' => $detail_activities,
+            'ordersArray' => $ordersArray,
         ]);
     }
 }

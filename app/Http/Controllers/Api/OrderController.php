@@ -14,31 +14,27 @@ class OrderController extends ApiController
 {
     public function create(Request $request){
 
-        // $validatedData = $request->validate([
-        //     'reference' => 'required|string|max:16|unique:orders',
-        //     'data' => 'required|string',
-        // ]);
-        
-        
         try {
             
             DB::beginTransaction();
-    
+       
             $validator = Validator::make(
                 $request->all(),[
                         'reference' => 'required|string|max:16|unique:orders',
-                        'data' => 'required|string',
+                        'data' => 'required',
+                        'client_id' => 'required|string|max:16',
                     ]
             );
-       
+    
             if($validator->fails()){
-                throw new \Exception("Error de validación ".$validator->errors(), 1);
+                return $this->sendError("Error de validación", $validator->errors(), 422);            
             }
             
             $order = new Order();
 
             $order->reference = $request->input('reference');
             $order->data = json_encode($request->input('data'));
+            $order->client_id = $request->input('client_id');
 
             $order->save();
 
@@ -61,27 +57,23 @@ class OrderController extends ApiController
 
     public function update(Request $request){
 
-        // $validatedData = $request->validate([
-        //     'reference' => 'required|string|max:16',
-        //     'data' => 'required|string',
-        // ]);
-        
         try {
 
             DB::beginTransaction();
-    
+
             $validator = Validator::make(
                 $request->all(),[
-                        'reference' => 'required|string|max:16|unique:orders',
-                        'data' => 'required|string',
+                        'reference' => 'required|string|max:16',
+                        'data' => 'required',
+                        'client_id' => 'required|string|max:16',
                     ]
             );
-       
+    
             if($validator->fails()){
-                throw new \Exception("Error de validación ".$validator->errors(), 1);
+                return $this->sendError("Error de validación", $validator->errors(), 422);            
             }
 
-            $order = Order::where('id', $request->input('reference'))->where('closed', 0)->first();
+            $order = Order::where('reference', $request->input('reference'))->where('closed', 0)->first();
         
             if(!$order){
                 throw new \Exception("'No se encontro la Orden a la que intentas acceder o esta cerrada, porfavor vuelve a intentarlo más tarde'", 1);

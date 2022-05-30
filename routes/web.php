@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\MessagesController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -74,8 +76,8 @@ Route::middleware(['auth','verified' ])->prefix('user')->group(function () {
     Route::post('/activity/create', [ActivityController::class, 'create'])->name('activity.create.post');
     Route::get('/activity/update/{id}', [ActivityController::class, 'updateView'])->name('activity.update');
     Route::put('/activity/update', [ActivityController::class, 'update'])->name('activity.update.put');
+    Route::put('/activity/desaperture', [ActivityController::class, 'departureActivity'])->name('activity.deaperture.update.put');
 
-    Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
 
     Route::put('/information/profile', [UserController::class, 'updateInformationProfile'])->name('user.profile.information.update');
 
@@ -85,3 +87,11 @@ Route::middleware(['auth','verified' ])->prefix('user')->group(function () {
 });
 
 
+Route::middleware(['auth','verified' ])->prefix('order')->group(function () {
+    // Route::post('/create', [OrderController::class, 'create'])->name('order.create.post');
+    Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
+});
+
+Route::prefix('messages')->group(function () {
+    // Route::post('/queue', [MessagesController::class, 'create'])->name('message.create');
+});

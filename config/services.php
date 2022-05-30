@@ -31,4 +31,14 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'whatsapp' => [
+        'whatsapp_token' => env('WHATSAPP_TOKEN'),
+        'whatsapp_instance_id' => env('WHATSAPP_INSTANCE_ID')
+    ],
+
+    'vonage' => [
+        'sms_from' => (string) env('VONAGE_SMS_FROM', ''),
+        'secret' => env('VONAGE_SECRET'),
+        'key' => env('VONAGE_KEY'),
+    ],
 ];
